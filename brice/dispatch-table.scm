@@ -1,5 +1,5 @@
 #lang racket
-(require "utils.scm")
+(require (except-in "utils.scm" square))
 (provide (all-defined-out))
 
 
