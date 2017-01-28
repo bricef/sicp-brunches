@@ -54,15 +54,18 @@
 
 
 (define (attach-tag type-tag contents)
-  (cons type-tag contents))
+  (cond
+    [(number? contents) contents]
+    [else (cons type-tag contents)]))
 
 (define (type-tag datum)
-  (if (list? datum)
-      (car datum)
+  (cond [(list? datum) (car datum)]
+        [(number? datum) 'scheme-number]
       (error "Bad tagged datum -- TYPE-TAG" datum)))
 
 (define (contents datum)
   (cond
+    [(number? datum) datum]
     [(and (list? datum) (equal? 2 (length datum))) (first (cdr datum))]
     [(list? datum) (cdr datum)]
     [else (error "Bad tagged datum -- CONTENTS" datum)]))
