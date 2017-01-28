@@ -7,6 +7,7 @@
 (define (sub x y) (apply-generic 'sub x y))
 (define (mul x y) (apply-generic 'mul x y))
 (define (div x y) (apply-generic 'div x y))
+(define (equ? x y) (apply-generic 'equ? x y))
 
 ;(define (square x) (apply-generic 'mul x x))
 
@@ -90,7 +91,8 @@
        (lambda (x y) (tag (mul-rat x y))))
   (put 'div '(rational rational)
        (lambda (x y) (tag (div-rat x y))))
-
+  (put 'denom '(rational) (lambda (x)(denom x)))
+  (put 'numer '(rational) (lambda (x)(numer x)))
   (put 'make 'rational
        (lambda (n d) (tag (make-rat n d))))
   'done)
@@ -141,10 +143,26 @@
 
   'done)
 
-
-
 (define (make-complex-from-real-imag x y)
   ((get 'make-from-real-imag 'complex) x y))
 
 (define (make-complex-from-mag-ang r a)
   ((get 'make-from-mag-ang 'complex) r a))
+
+
+(define (install-equality-package)
+  (put 'equ? '(scheme-number scheme-number)
+    (lambda (x y) (= x y)))
+
+  (put 'equ? '(complex complex)
+    (lambda (x y)
+      (and
+        (equ? (real-part x) (real-part y))
+        (equ? (imag-part x) (imag-part y)))))
+
+  (put 'equ? '(rational rational)
+    (lambda (x y)
+      (and
+        (= ((get 'numer '(rational)) x) ((get 'numer '(rational)) y))
+        (= ((get 'denom '(rational)) x) ((get 'denom '(rational)) y)))))
+  'done)

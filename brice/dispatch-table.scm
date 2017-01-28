@@ -46,6 +46,7 @@
     (let
       [(proc (get op type-tags))
        (procargs (map contents args))]
+        ; (prn "type-tags" type-tags "")
       (if proc
           (apply proc procargs)
           (error
@@ -59,15 +60,16 @@
     [else (cons type-tag contents)]))
 
 (define (type-tag datum)
-  (cond [(list? datum) (car datum)]
+  (cond [(pair? datum) (car datum)]
         [(number? datum) 'scheme-number]
       (error "Bad tagged datum -- TYPE-TAG" datum)))
 
 (define (contents datum)
+  ;(prn datum "")
   (cond
     [(number? datum) datum]
     [(and (list? datum) (equal? 2 (length datum))) (first (cdr datum))]
-    [(list? datum) (cdr datum)]
+    [(pair? datum) (cdr datum)]
     [else (error "Bad tagged datum -- CONTENTS" datum)]))
 
 
