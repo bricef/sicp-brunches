@@ -53,11 +53,6 @@ is add the following to the complex package:''
 ")
 
   (define z (list 'complex 'rectangular (cons 3 4)))
-  (void
-    (install-rectangular-package)
-    (install-scheme-number-package)
-    (install-rational-package)
-    (install-complex-package))
 
 (Q: "Describe in detail why this works.")
 (A: "Adding the following:

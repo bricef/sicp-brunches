@@ -19,12 +19,6 @@
 
 (module* main #f
   (title "Exercise 2.79")
-  (void
-    (install-rectangular-package)
-    (install-scheme-number-package)
-    (install-rational-package)
-    (install-complex-package)
-    (install-equality-package))
 
   (assert "We can compare scheme numbers"
     (apply-generic 'equ? 1 1.0))

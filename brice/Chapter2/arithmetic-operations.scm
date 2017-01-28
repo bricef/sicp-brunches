@@ -166,3 +166,10 @@
         (= ((get 'numer '(rational)) x) ((get 'numer '(rational)) y))
         (= ((get 'denom '(rational)) x) ((get 'denom '(rational)) y)))))
   'done)
+
+  (void
+    (install-rectangular-package)
+    (install-scheme-number-package)
+    (install-rational-package)
+    (install-complex-package)
+    (install-equality-package))

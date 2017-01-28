@@ -30,11 +30,7 @@
 (module* main #f
 
   (title "Exercise 2.78")
-  (void
-    (install-rectangular-package)
-    (install-scheme-number-package)
-    (install-rational-package)
-    (install-complex-package))
+  
   (prn "For the modification, see the excercise commit")
 
   (assertequal? "Our scheme number package deals with actual numbers"
