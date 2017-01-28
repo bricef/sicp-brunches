@@ -21,15 +21,15 @@
   (title "Exercise 2.79")
 
   (assert "We can compare scheme numbers"
-    (apply-generic 'equ? 1 1.0))
+    (equ? 1 1.0))
 
   (assert "We can compare complex numbers"
-    (apply-generic 'equ?
+    (equ?
       (make-complex-from-real-imag 3 4)
       (make-complex-from-real-imag 3 4)))
 
   (assert "We can compare rational numbers"
-    (apply-generic 'equ? (make-rational 2 4) (make-rational 1 2)))
+    (equ? (make-rational 2 4) (make-rational 1 2)))
 
 
 )
