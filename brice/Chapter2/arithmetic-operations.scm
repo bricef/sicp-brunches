@@ -1,5 +1,6 @@
 #lang racket
 (require "../dispatch-table.scm")
+(require (except-in "../utils.scm" square))
 (provide (all-defined-out))
 
 (define (add x y) (apply-generic 'add x y))
@@ -14,7 +15,7 @@
 (define (magnitude z) (apply-generic 'magnitude z))
 (define (angle z) (apply-generic 'angle z))
 
-
+(define (square x) (* x x))
 
 
 (define (install-rectangular-package)

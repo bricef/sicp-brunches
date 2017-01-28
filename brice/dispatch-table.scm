@@ -41,10 +41,13 @@
 (define put (operation-table 'insert-proc!))
 
 (define (apply-generic op . args)
+  ;(prn "apply-generic:" op args "")
   (let ((type-tags (map type-tag args)))
-    (let ((proc (get op type-tags)))
+    (let
+      [(proc (get op type-tags))
+       (procargs (map contents args))]
       (if proc
-          (apply proc (map contents args))
+          (apply proc procargs)
           (error
             "No method for these types -- APPLY-GENERIC"
             (list op type-tags))))))
@@ -54,14 +57,15 @@
   (cons type-tag contents))
 
 (define (type-tag datum)
-  (if (pair? datum)
+  (if (list? datum)
       (car datum)
       (error "Bad tagged datum -- TYPE-TAG" datum)))
 
 (define (contents datum)
-  (if (pair? datum)
-      (cdr datum)
-      (error "Bad tagged datum -- CONTENTS" datum)))
+  (cond
+    [(and (list? datum) (equal? 2 (length datum))) (first (cdr datum))]
+    [(list? datum) (cdr datum)]
+    [else (error "Bad tagged datum -- CONTENTS" datum)]))
 
 
 (module* main #f
