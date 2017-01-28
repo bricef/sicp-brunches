@@ -1,5 +1,5 @@
 #lang racket
-(require (except-in "../utils.scm" square))
+(require"../utils.scm" )
 (require "../dispatch-table.scm")
 (require "./arithmetic-operations.scm")
 
@@ -109,9 +109,7 @@ For the first tag (`complex`), the magnitude procedure called is the
 complex package's magnitude procedure, which itself calls the
 `apply-generic` procedure. The next time `magnitude` is called, it
 is the rectangular package's magnitude procedure, which gives the
-correct answer:
-")
-
+correct answer:")
 
   (magnitude z)
 )
