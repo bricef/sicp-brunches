@@ -8,6 +8,7 @@
 (define (mul x y) (apply-generic 'mul x y))
 (define (div x y) (apply-generic 'div x y))
 (define (equ? x y) (apply-generic 'equ? x y))
+(define (=zero? x) (apply-generic '=zero? x))
 
 ;(define (square x) (apply-generic 'mul x x))
 
@@ -91,8 +92,8 @@
        (lambda (x y) (tag (mul-rat x y))))
   (put 'div '(rational rational)
        (lambda (x y) (tag (div-rat x y))))
-  (put 'denom '(rational) (lambda (x)(denom x)))
-  (put 'numer '(rational) (lambda (x)(numer x)))
+  (put 'denom '(rational) (lambda (x) (denom x)))
+  (put 'numer '(rational) (lambda (x) (numer x)))
   (put 'make 'rational
        (lambda (n d) (tag (make-rat n d))))
   'done)
@@ -167,9 +168,28 @@
         (= ((get 'denom '(rational)) x) ((get 'denom '(rational)) y)))))
   'done)
 
+
+(define (install-zero?-package)
+  (put '=zero? '(scheme-number)
+    (lambda (x) (= 0 x)))
+
+  (put '=zero? '(complex)
+    (lambda (x)
+      (and
+        (= 0 (real-part x))
+        (= 0 (imag-part x)))))
+
+  (put '=zero? '(rational)
+    (lambda (x)
+      (and
+        (= 0 ((get 'numer '(rational)) x)))))
+  'done)
+
+
   (void
     (install-rectangular-package)
     (install-scheme-number-package)
     (install-rational-package)
     (install-complex-package)
-    (install-equality-package))
+    (install-equality-package)
+    (install-zero?-package))
