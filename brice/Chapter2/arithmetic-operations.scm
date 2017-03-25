@@ -48,6 +48,8 @@
     (attach-tag 'scheme-number x))
   (put 'add '(scheme-number scheme-number)
        (lambda (x y) (tag (+ x y))))
+  (put 'add '(scheme-number scheme-number scheme-number)
+       (lambda (x y z) (tag (+ x y z))))
   (put 'sub '(scheme-number scheme-number)
        (lambda (x y) (tag (- x y))))
   (put 'mul '(scheme-number scheme-number)
@@ -88,6 +90,8 @@
   (define (tag x) (attach-tag 'rational x))
   (put 'add '(rational rational)
        (lambda (x y) (tag (add-rat x y))))
+  (put 'add '(rational rational rational)
+      (lambda (x y z) (tag (add-rat (add-rat x y) z))))
   (put 'sub '(rational rational)
        (lambda (x y) (tag (sub-rat x y))))
   (put 'mul '(rational rational)
@@ -128,6 +132,9 @@
 
   (put 'add '(complex complex)
        (lambda (z1 z2) (tag (add-complex z1 z2))))
+
+  (put 'add '(complex complex complex)
+      (lambda (z1 z2 z3) (tag (add-complex (add-complex z1 z2) z3))))
   (put 'sub '(complex complex)
        (lambda (z1 z2) (tag (sub-complex z1 z2))))
   (put 'mul '(complex complex)

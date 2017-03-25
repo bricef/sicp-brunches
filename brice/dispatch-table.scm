@@ -20,9 +20,9 @@
         (cond
           [(empty? in-table) #f]
           [(equal? (first (first in-table)) (list key-1 key-2))
-            (second (first in-table))]
-          [else (inner (rest in-table))]
-          ))
+           (second (first in-table))]
+          [else (inner (rest in-table))]))
+
       (inner local-table))
     (define (insert! key-1 key-2 value)
       (if (lookup key-1 key-2) (error "Cannot overwrite existing key")
@@ -44,6 +44,29 @@
 (define get-coercion (coercion-table 'lookup-proc))
 (define put-coercion (coercion-table 'insert-proc!))
 
+
+
+; for type in type-tags, find converters to that type for the others
+; for the first where all converters are present, try to get the op from the table
+; noop? then move onto the next eleemt
+
+(define (converters-for type xs)
+  (define (inner ys)
+    (if (empty? ys) nil
+      (let*
+        [(elem (first ys))
+         (same-type (equal? (type-tag elem) type))
+         (identity (λ (x) x))
+         (coercer (get-coercion (type-tag elem) type))
+         (converter (if same-type identity coercer))]
+        (if converter
+          (cons converter (converters-for type (rest ys)))
+          nil))))
+  (let* [(res (inner xs))
+         (all-converted (= (length xs) (length res)))]
+    (if all-converted res nil)))
+
+
 (define (apply-generic op . args)
   ;(prn 'apply-generic op args)
   (let*
@@ -52,22 +75,27 @@
      (procargs (map contents args))]
     (cond
         [proc (apply proc procargs)]
-        [(= (length args) 2)
+        [else
           (let*
-            [(t1 (first type-tags))
-             (t2 (second type-tags))
-             (t1->t2 (get-coercion t1 t2))
-             (t2->t1 (get-coercion t2 t1))
-             (a1 (first args))
-             (a2 (second args))]
-            (cond
-              ((= t1 t2) (error "No method or coercion for these types" (list op type-tags)))
-              (t1->t2 (apply-generic op (t1->t2 a1) a2))
-              (t2->t1 (apply-generic op a1 (t2->t1 a2)))
-              (else
-                (error "No method or coercion for these types" (list op type-tags)))
-              ))]
-          [else (error "No method for these types -- APPLY-GENERIC" (list op type-tags))])))
+            [(largs (length args))
+             (possible-convertions (map (λ (t) (converters-for t args)) type-tags))
+             (possible-procs (map (λ (t) (get op (repeat t largs))) type-tags))
+             (procs-and-convertions (zip possible-procs possible-convertions))
+             (possibles (filter (λ (pcs) (and (first pcs) (not (empty? (second pcs))))) procs-and-convertions))]
+            ;(prn "====================="
+            ;  type-tags
+            ;  possible-convertions
+            ;  possible-procs
+            ;  procs-and-convertions
+            ;  possibles)
+            (if (not (empty? possibles))
+              (let*
+                [(match (first possibles))
+                 (proc (first match))
+                 (converters (second match))
+                 (converted (map (λ (ca) ((first ca) (second ca))) (zip converters args)))]
+                (apply proc converted))
+              (error "No method for these types -- APPLY-GENERIC" (list op type-tags))))])))
 
 
 (define (attach-tag type-tag contents)
@@ -92,5 +120,4 @@
 (module* main #f
   (assert "Nothing in an empty table" (not (get 'a 'b)))
   (void (put 'a 'b 123))
-  (assertequal? "We can lookup what we inserted" 123 (get 'a 'b))
-)
+  (assertequal? "We can lookup what we inserted" 123 (get 'a 'b)))
