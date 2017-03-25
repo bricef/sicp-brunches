@@ -15,6 +15,7 @@ This repository is for the [Cambridge Programmer's Study Group](http://www.meetu
  - [Code from the book](https://mitpress.mit.edu/sicp/code/)
  - [Interactive version of the book](https://xuanji.appspot.com/isicp/)
  - [Static version of the book, can be copied offline](http://www.sicp-book.com)
+ - [Advanced Scheme - Some naughty bits](http://people.csail.mit.edu/jhbrown/scheme/)
 
 ## Book Reviews
 
