@@ -65,14 +65,11 @@ the types of the application, the problem will persist in the next iteration")
 with arguments of the same type, or does apply-generic work correctly as is?")
 
   (A: "Louis is correct. We must handle the case when two arguments have
-the same type AND we cannot find a procedure differently. Ideally we would
+the same type AND we cannot find a procedure for the arguments. Ideally we would
 search for a type that does have the requested operation and coerce both
 arguments to that type instead. We could also raise an error.")
 
-(assert-raises-error "Errors when apply-generic a missing procedure with args of same type."
-  (apply-generic 'exp
-    (make-complex-from-real-imag 1 2)
-    (make-complex-from-real-imag 3 4)))
-
-
-)
+ (assert-raises-error "Errors when apply-generic a missing procedure with args of same type."
+   (apply-generic 'exp
+     (make-complex-from-real-imag 1 2)
+     (make-complex-from-real-imag 3 4))))
