@@ -40,18 +40,34 @@
 (define get (operation-table 'lookup-proc))
 (define put (operation-table 'insert-proc!))
 
+(define coercion-table (make-table))
+(define get-coercion (coercion-table 'lookup-proc))
+(define put-coercion (coercion-table 'insert-proc!))
+
 (define (apply-generic op . args)
-  ;(prn "apply-generic:" op args "")
-  (let ((type-tags (map type-tag args)))
-    (let
-      [(proc (get op type-tags))
-       (procargs (map contents args))]
-        ; (prn "type-tags" type-tags "")
-      (if proc
-          (apply proc procargs)
-          (error
-            "No method for these types -- APPLY-GENERIC"
-            (list op type-tags))))))
+  ;(prn 'apply-generic op args)
+  (let*
+    [(type-tags (map type-tag args))
+     (proc (get op type-tags))
+     (procargs (map contents args))]
+    (cond
+        [proc (apply proc procargs)]
+        [(= (length args) 2)
+          (let*
+            [(t1 (first type-tags))
+             (t2 (second type-tags))
+             (t1->t2 (get-coercion t1 t2))
+             (t2->t1 (get-coercion t2 t1))
+             (a1 (first args))
+             (a2 (second args))]
+            (cond
+              ((= t1 t2) (error "No method or coercion for these types" (list op type-tags)))
+              (t1->t2 (apply-generic op (t1->t2 a1) a2))
+              (t2->t1 (apply-generic op a1 (t2->t1 a2)))
+              (else
+                (error "No method or coercion for these types" (list op type-tags)))
+              ))]
+          [else (error "No method for these types -- APPLY-GENERIC" (list op type-tags))])))
 
 
 (define (attach-tag type-tag contents)
